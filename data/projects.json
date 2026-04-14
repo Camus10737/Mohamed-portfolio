@@ -1,0 +1,47 @@
+[
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "title": "Coiffure Élégance Québec",
+    "slug": "coiffure-elegance-quebec",
+    "category": "site-vitrine",
+    "description": "Site vitrine pour salon de coiffure avec galerie photos et formulaire de contact.",
+    "longDescription": "Conception et développement d'un site vitrine complet pour un salon de coiffure haut de gamme à Québec City. Le site inclut une galerie photos, un formulaire de contact, les horaires et tarifs, ainsi qu'une section présentation de l'équipe. Design élégant et entièrement responsive.",
+    "stack": ["Next.js", "Tailwind CSS", "Vercel"],
+    "image": "/projects/coiffure-elegance.jpg",
+    "url": "https://exemple.com",
+    "featured": true,
+    "visible": true,
+    "order": 1,
+    "createdAt": "2025-01-15"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "title": "GarageMax Québec",
+    "slug": "garagemax-quebec",
+    "category": "site-vitrine",
+    "description": "Site professionnel pour garage automobile avec système de devis en ligne.",
+    "longDescription": "Développement d'un site web professionnel pour un garage automobile de Québec City. Fonctionnalités clés : formulaire de demande de devis en ligne, galerie des services, présentation de l'équipe, et intégration d'un système de prise de rendez-vous. Envoi automatique des devis par email via Resend.",
+    "stack": ["Next.js", "Tailwind CSS", "Resend"],
+    "image": "/projects/garagemax.jpg",
+    "url": "https://exemple.com",
+    "featured": true,
+    "visible": true,
+    "order": 2,
+    "createdAt": "2025-02-10"
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440003",
+    "title": "Chez Marcel — Restaurant",
+    "slug": "chez-marcel-restaurant",
+    "category": "application",
+    "description": "Site vitrine et système de réservation en ligne pour restaurant gastronomique.",
+    "longDescription": "Création d'un site web complet pour un restaurant gastronomique de Québec City. Le projet comprend un menu en ligne avec photos, un système de réservation de table en temps réel, une galerie photos des plats et de la salle, ainsi qu'une section actualités et événements spéciaux.",
+    "stack": ["Next.js", "Tailwind CSS", "Framer Motion"],
+    "image": "/projects/chez-marcel.jpg",
+    "url": "https://exemple.com",
+    "featured": false,
+    "visible": true,
+    "order": 3,
+    "createdAt": "2025-03-05"
+  }
+]

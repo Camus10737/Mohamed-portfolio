@@ -1,36 +1,138 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio — Mohamed Camara
 
-## Getting Started
+Portfolio freelance one-page pour Mohamed Camara, développeur web freelance à Québec City.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router) + TypeScript
+- **Tailwind CSS v4**
+- **Framer Motion** (animations)
+- **Resend** (emails de contact)
+- **bcryptjs** + **jose** (authentification admin)
+
+---
+
+## Lancer en local
+
+### 1. Cloner le repo
+
+```bash
+git clone https://github.com/mohamedcamara/portfolio.git
+cd portfolio
+```
+
+### 2. Installer les dépendances
+
+```bash
+npm install
+```
+
+### 3. Configurer les variables d'environnement
+
+Copier `.env.example` vers `.env.local` et remplir les valeurs :
+
+```bash
+cp .env.example .env.local
+```
+
+```env
+RESEND_API_KEY=re_xxxxx         # Clé API depuis resend.com
+CONTACT_EMAIL=contact@tonemail.ca
+ADMIN_PASSWORD_HASH=$2b$10$...  # Généré via la commande ci-dessous
+SESSION_SECRET=ta-chaine-de-32-caracteres-minimum
+```
+
+### 4. Générer le hash du mot de passe admin
+
+```bash
+node -e "const bcrypt = require('bcryptjs'); bcrypt.hash('TON_MOT_DE_PASSE', 10).then(console.log)"
+```
+
+Copier le résultat dans `ADMIN_PASSWORD_HASH` dans `.env.local`.
+
+### 5. Lancer le serveur de développement
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Gestion des projets (panel admin)
 
-## Learn More
+1. Accéder à `/admin/login`
+2. Entrer le mot de passe défini lors de la configuration
+3. Ajouter, modifier, masquer ou supprimer des projets depuis le tableau de bord
 
-To learn more about Next.js, take a look at the following resources:
+Les projets sont stockés dans `data/projects.json`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Structure des fichiers
 
-## Deploy on Vercel
+```
+├── app/
+│   ├── page.tsx                  ← Page principale (portfolio public)
+│   ├── layout.tsx                ← Layout global + SEO
+│   ├── admin/
+│   │   ├── page.tsx              ← Dashboard admin (protégé)
+│   │   └── login/page.tsx        ← Connexion admin
+│   └── api/
+│       ├── projects/route.ts     ← CRUD projets
+│       ├── contact/route.ts      ← Envoi email via Resend
+│       ├── upload/route.ts       ← Upload images
+│       └── auth/
+│           ├── login/route.ts
+│           └── logout/route.ts
+├── components/
+│   ├── sections/                 ← Sections de la page (Navbar, Hero, etc.)
+│   └── ui/                       ← Composants réutilisables
+├── data/
+│   └── projects.json             ← Source de vérité des projets
+├── lib/
+│   ├── auth.ts                   ← Helpers session JWT
+│   └── projects.ts               ← Lecture/écriture du JSON
+├── public/
+│   └── projects/                 ← Images uploadées
+├── middleware.ts                 ← Protection route /admin
+└── .env.local                    ← Variables d'environnement (ne pas committer)
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Déploiement sur Vercel
+
+1. Pusher le code sur GitHub
+2. Connecter le repo sur [vercel.com](https://vercel.com)
+3. Ajouter les variables d'environnement dans Vercel → Settings → Environment Variables
+4. Déployer — Vercel s'occupe du reste
+
+> **Important :** Sur Vercel (serverless), les écritures dans `data/projects.json` ne persisteront pas entre les déploiements. Pour un usage en production stable, envisager une base de données (ex : Vercel KV ou Supabase).
+
+---
+
+## Ajouter un projet
+
+Via le panel admin (`/admin`) ou directement dans `data/projects.json` :
+
+```json
+{
+  "id": "uuid-unique",
+  "title": "Nom du projet",
+  "slug": "nom-du-projet",
+  "category": "site-vitrine",
+  "description": "Description courte (carte)",
+  "longDescription": "Description longue (modale)",
+  "stack": ["Next.js", "Tailwind CSS"],
+  "image": "/projects/monimage.jpg",
+  "url": "https://monsite.ca",
+  "featured": true,
+  "visible": true,
+  "order": 1,
+  "createdAt": "2025-01-15"
+}
+```
+
+Catégories disponibles : `site-vitrine`, `e-commerce`, `systeme-interne`, `application`
