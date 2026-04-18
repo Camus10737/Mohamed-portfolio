@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, MapPin, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import { useLang } from '@/lib/i18n/context'
 
 interface FormData {
   name: string
@@ -12,24 +13,14 @@ interface FormData {
   message: string
 }
 
-const projectTypes = [
-  { value: '', label: 'Type de projet' },
-  { value: 'site-vitrine', label: 'Site vitrine' },
-  { value: 'e-commerce', label: 'E-commerce' },
-  { value: 'reservation', label: 'Système de réservation' },
-  { value: 'systeme-interne', label: 'Système interne' },
-  { value: 'autre', label: 'Autre' },
-]
-
 type ToastType = 'success' | 'error' | null
 
 export default function Contact() {
+  const { t } = useLang()
+  const f = t.contact.form
+
   const [form, setForm] = useState<FormData>({
-    name: '',
-    email: '',
-    company: '',
-    projectType: '',
-    message: '',
+    name: '', email: '', company: '', projectType: '', message: '',
   })
   const [errors, setErrors] = useState<Partial<FormData>>({})
   const [loading, setLoading] = useState(false)
@@ -37,23 +28,23 @@ export default function Contact() {
 
   const validate = (): boolean => {
     const newErrors: Partial<FormData> = {}
-    if (!form.name.trim()) newErrors.name = 'Ce champ est requis'
+    if (!form.name.trim()) newErrors.name = f.required
     if (!form.email.trim()) {
-      newErrors.email = 'Ce champ est requis'
+      newErrors.email = f.required
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = 'Email invalide'
+      newErrors.email = f.email_invalid
     }
-    if (!form.projectType) newErrors.projectType = 'Veuillez sélectionner un type'
+    if (!form.projectType) newErrors.projectType = f.type_required
     if (!form.message.trim()) {
-      newErrors.message = 'Ce champ est requis'
+      newErrors.message = f.required
     } else if (form.message.trim().length < 20) {
-      newErrors.message = 'Minimum 20 caractères'
+      newErrors.message = f.msg_min
     }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!validate()) return
     setLoading(true)
@@ -78,93 +69,103 @@ export default function Contact() {
     }
   }
 
+  const inputBase =
+    'w-full px-4 py-3 rounded-xl text-sm text-white placeholder-white/25 outline-none transition-all border'
+  const inputNormal = `${inputBase} border-white/10 focus:border-gold/50 bg-white/[0.04]`
+  const inputError = `${inputBase} border-red-500/50 focus:border-red-500 bg-red-500/[0.05]`
+
   const inputClass = (field: keyof FormData) =>
-    `w-full px-4 py-3 rounded-xl border text-sm text-text-primary placeholder-gray-400 outline-none transition-colors ${
-      errors[field]
-        ? 'border-red-400 focus:border-red-500 bg-red-50'
-        : 'border-gray-200 focus:border-electric bg-white'
-    }`
+    errors[field] ? inputError : inputNormal
 
   return (
-    <section id="contact" className="py-24 bg-white">
+    <section id="contact" style={{ background: '#07080d' }} className="py-24">
+      <div className="section-divider mb-0" />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <p className="text-electric font-semibold text-sm uppercase tracking-wider mb-3">
-            Contact
+          <p className="text-gold font-semibold text-sm uppercase tracking-widest mb-4">
+            {t.contact.eyebrow}
           </p>
-          <h2 className="text-3xl sm:text-[2rem] font-bold text-navy mb-4">
-            Parlons de votre projet
+          <h2 className="text-3xl sm:text-4xl font-black text-white mb-4 leading-tight whitespace-pre-line">
+            {t.contact.title}
           </h2>
-          <p className="text-text-secondary text-base">
-            Un café virtuel ou en personne à Québec City, c&rsquo;est parti&nbsp;!
-          </p>
+          <p className="text-white/45 text-base">{t.contact.sub}</p>
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Colonne gauche — infos */}
+          {/* Left — info */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -28 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
-            className="space-y-6"
+            className="space-y-5"
           >
+            {/* Email */}
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Mail className="w-5 h-5 text-electric" />
+              <div
+                className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: 'rgba(245,158,11,0.1)' }}
+              >
+                <Mail className="w-5 h-5" style={{ color: '#f59e0b' }} />
               </div>
               <div>
-                <p className="text-sm font-semibold text-text-primary mb-1">Email</p>
-                {/* TODO: Mohamed remplacera cet email */}
+                <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-1">
+                  {t.contact.email_label}
+                </p>
                 <a
                   href="mailto:contact@mohamedcamara.ca"
-                  className="text-electric hover:underline text-sm"
+                  className="text-white/70 hover:text-gold transition-colors text-sm"
                 >
                   contact@mohamedcamara.ca
                 </a>
               </div>
             </div>
 
+            {/* Location */}
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-5 h-5 text-electric" />
+              <div
+                className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: 'rgba(245,158,11,0.1)' }}
+              >
+                <MapPin className="w-5 h-5" style={{ color: '#f59e0b' }} />
               </div>
               <div>
-                <p className="text-sm font-semibold text-text-primary mb-1">Localisation</p>
-                <p className="text-text-secondary text-sm">Québec City, QC, Canada</p>
-              </div>
-            </div>
-
-            <div className="p-5 bg-green-50 border border-green-200 rounded-2xl">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
-                <p className="text-sm font-semibold text-green-700">
-                  Disponible pour nouveaux projets
+                <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-1">
+                  {t.contact.location_label}
                 </p>
+                <p className="text-white/70 text-sm">Québec City, QC, Canada</p>
               </div>
-              <p className="text-sm text-green-600">Je réponds sous 24h.</p>
             </div>
 
-            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-              <p className="text-sm font-semibold text-text-primary mb-3">
-                Parfait pour vous si :
-              </p>
-              <ul className="space-y-2">
-                {[
-                  'Votre entreprise na pas de site web',
-                  'Votre site actuel est vieillissant',
-                  'Vous cherchez un développeur local et réactif',
-                  'Vous voulez un site livré rapidement',
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-text-secondary">
-                    <CheckCircle className="w-4 h-4 text-electric flex-shrink-0 mt-0.5" />
+            {/* Availability */}
+            <div
+              className="p-5 rounded-2xl border"
+              style={{ background: 'rgba(52,211,153,0.06)', borderColor: 'rgba(52,211,153,0.2)' }}
+            >
+              <div className="flex items-center gap-2.5 mb-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
+                <p className="text-sm font-bold text-emerald-400">{t.contact.available}</p>
+              </div>
+              <p className="text-sm text-emerald-400/60">{t.contact.available_sub}</p>
+            </div>
+
+            {/* Checklist */}
+            <div
+              className="p-6 rounded-2xl border"
+              style={{ background: '#161b27', borderColor: 'rgba(255,255,255,0.07)' }}
+            >
+              <p className="text-sm font-bold text-white mb-4">{t.contact.perfect_for}</p>
+              <ul className="space-y-2.5">
+                {t.contact.checklist.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm text-white/50">
+                    <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: '#f59e0b' }} />
                     {item}
                   </li>
                 ))}
@@ -172,9 +173,9 @@ export default function Contact() {
             </div>
           </motion.div>
 
-          {/* Colonne droite — formulaire */}
+          {/* Right — form */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 28 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5 }}
@@ -182,10 +183,10 @@ export default function Contact() {
             {/* Toast */}
             {toast && (
               <div
-                className={`flex items-center gap-3 p-4 rounded-xl mb-6 text-sm font-medium ${
+                className={`flex items-center gap-3 p-4 rounded-xl mb-6 text-sm font-medium border ${
                   toast === 'success'
-                    ? 'bg-green-50 border border-green-200 text-green-700'
-                    : 'bg-red-50 border border-red-200 text-red-700'
+                    ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400'
+                    : 'bg-red-500/10 border-red-500/25 text-red-400'
                 }`}
               >
                 {toast === 'success' ? (
@@ -193,112 +194,111 @@ export default function Contact() {
                 ) : (
                   <AlertCircle className="w-5 h-5 flex-shrink-0" />
                 )}
-                {toast === 'success'
-                  ? 'Message envoyé ! Je vous réponds sous 24h.'
-                  : 'Une erreur est survenue. Veuillez réessayer.'}
+                {toast === 'success' ? f.success : f.error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
-              {/* Nom */}
+              {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-1.5">
-                  Nom complet <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-white/60 mb-1.5">
+                  {f.name} <span className="text-gold">*</span>
                 </label>
                 <input
                   type="text"
-                  placeholder="Jean-Pierre Tremblay"
+                  placeholder={f.name_ph}
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className={inputClass('name')}
                 />
-                {errors.name && (
-                  <p className="text-xs text-red-500 mt-1">{errors.name}</p>
-                )}
+                {errors.name && <p className="text-xs text-red-400 mt-1">{errors.name}</p>}
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-1.5">
-                  Email <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-white/60 mb-1.5">
+                  {f.email} <span className="text-gold">*</span>
                 </label>
                 <input
                   type="email"
-                  placeholder="jean@votreentreprise.ca"
+                  placeholder={f.email_ph}
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   className={inputClass('email')}
                 />
-                {errors.email && (
-                  <p className="text-xs text-red-500 mt-1">{errors.email}</p>
-                )}
+                {errors.email && <p className="text-xs text-red-400 mt-1">{errors.email}</p>}
               </div>
 
-              {/* Entreprise */}
+              {/* Company */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-1.5">
-                  Nom de votre entreprise{' '}
-                  <span className="text-text-secondary font-normal">(optionnel)</span>
+                <label className="block text-sm font-medium text-white/60 mb-1.5">
+                  {f.company}{' '}
+                  <span className="text-white/30 font-normal">{f.company_opt}</span>
                 </label>
                 <input
                   type="text"
-                  placeholder="Mon Entreprise Inc."
+                  placeholder={f.company_ph}
                   value={form.company}
                   onChange={(e) => setForm({ ...form, company: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-text-primary placeholder-gray-400 outline-none focus:border-electric transition-colors"
+                  className={inputNormal}
                 />
               </div>
 
-              {/* Type de projet */}
+              {/* Project type */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-1.5">
-                  Type de projet <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-white/60 mb-1.5">
+                  {f.type} <span className="text-gold">*</span>
                 </label>
                 <select
                   value={form.projectType}
                   onChange={(e) => setForm({ ...form, projectType: e.target.value })}
                   className={`${inputClass('projectType')} appearance-none`}
+                  style={{ background: errors.projectType ? undefined : '#161b27' }}
                 >
-                  {projectTypes.map((t) => (
-                    <option key={t.value} value={t.value} disabled={t.value === ''}>
-                      {t.label}
+                  {f.type_opts.map((opt) => (
+                    <option
+                      key={opt.value}
+                      value={opt.value}
+                      disabled={opt.value === ''}
+                      style={{ background: '#161b27', color: '#f1f5f9' }}
+                    >
+                      {opt.label}
                     </option>
                   ))}
                 </select>
                 {errors.projectType && (
-                  <p className="text-xs text-red-500 mt-1">{errors.projectType}</p>
+                  <p className="text-xs text-red-400 mt-1">{errors.projectType}</p>
                 )}
               </div>
 
               {/* Message */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-1.5">
-                  Décrivez votre projet <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-white/60 mb-1.5">
+                  {f.message} <span className="text-gold">*</span>
                 </label>
                 <textarea
                   rows={5}
-                  placeholder="Parlez-moi de votre projet, vos besoins, votre délai..."
+                  placeholder={f.message_ph}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
                   className={`${inputClass('message')} resize-none`}
                 />
                 <div className="flex justify-between mt-1">
                   {errors.message ? (
-                    <p className="text-xs text-red-500">{errors.message}</p>
-                  ) : (
-                    <span />
-                  )}
-                  <p className="text-xs text-text-secondary">{form.message.length} / 20 min</p>
+                    <p className="text-xs text-red-400">{errors.message}</p>
+                  ) : <span />}
+                  <p className="text-xs text-white/25">{form.message.length} / 20 min</p>
                 </div>
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-electric text-white font-semibold rounded-xl hover:bg-electric-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                className="w-full flex items-center justify-center gap-2 px-6 py-4 text-[#07080d] font-bold rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(245,158,11,0.2)]"
+                style={{ background: '#f59e0b' }}
               >
                 {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-                {loading ? 'Envoi en cours...' : 'Envoyer le message'}
+                {loading ? f.submitting : f.submit}
               </button>
             </form>
           </motion.div>

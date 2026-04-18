@@ -2,61 +2,24 @@
 
 import { motion } from 'framer-motion'
 import { Globe, ShoppingCart, Calendar, BarChart3, RefreshCw, Zap } from 'lucide-react'
+import { useLang } from '@/lib/i18n/context'
 
-const services = [
-  {
-    icon: Globe,
-    title: 'Site vitrine',
-    tagline: 'Votre entreprise mérite dêtre trouvée en ligne',
-    description:
-      'Design moderne, mobile, SEO de base, livraison en 5–10 jours ouvrables.',
-  },
-  {
-    icon: ShoppingCart,
-    title: 'E-commerce',
-    tagline: 'Vendez vos produits 24h/24, 7j/7',
-    description:
-      'Catalogue produits, panier, paiement Stripe / PayPal intégré.',
-  },
-  {
-    icon: Calendar,
-    title: 'Système de réservation',
-    tagline: 'Fini les appels pour les rendez-vous',
-    description:
-      'Idéal salons, garages, cliniques — réservation en ligne automatique.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Tableau de bord interne',
-    tagline: 'Gérez votre business en un clic',
-    description:
-      'Suivi clients, inventaire, rapports — accès sécurisé et personnalisé.',
-  },
-  {
-    icon: RefreshCw,
-    title: 'Refonte de site',
-    tagline: 'Votre vieux site vous fait honte ?',
-    description:
-      'Modernisation complète, même contenu, nouveau look professionnel.',
-  },
-  {
-    icon: Zap,
-    title: 'Maintenance & support',
-    tagline: 'Je reste disponible après la livraison',
-    description:
-      'Mises à jour, corrections, évolutions — forfait mensuel sans surprise.',
-  },
-]
+const icons = [Globe, ShoppingCart, Calendar, BarChart3, RefreshCw, Zap]
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 28 },
   visible: { opacity: 1, y: 0 },
 }
 
 export default function Services() {
+  const { t } = useLang()
+
   return (
-    <section id="services" className="py-24 bg-surface">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="services" style={{ background: '#07080d' }} className="py-24">
+      {/* Top divider */}
+      <div className="section-divider mb-0" />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-0">
         {/* Header */}
         <motion.div
           initial="hidden"
@@ -66,43 +29,83 @@ export default function Services() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <p className="text-electric font-semibold text-sm uppercase tracking-wider mb-3">
-            Services
+          <p className="text-gold font-semibold text-sm uppercase tracking-widest mb-4">
+            {t.services.eyebrow}
           </p>
-          <h2 className="text-3xl sm:text-[2rem] font-bold text-navy mb-4">
-            Ce que je fais pour vous
+          <h2 className="text-3xl sm:text-4xl font-black text-white mb-4 leading-tight whitespace-pre-line">
+            {t.services.title}
           </h2>
-          <p className="text-text-secondary text-base max-w-xl mx-auto">
-            Des solutions numériques concrètes, adaptées aux PME québécoises
+          <p className="text-white/45 text-base max-w-xl mx-auto">
+            {t.services.sub}
           </p>
         </motion.div>
 
         {/* Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, index) => {
-            const Icon = service.icon
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {t.services.items.map((service, index) => {
+            const Icon = icons[index]
             return (
               <motion.div
                 key={service.title}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
+                viewport={{ once: true, amount: 0.15 }}
                 variants={fadeUp}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 group"
+                transition={{ duration: 0.5, delay: index * 0.07 }}
+                className="group relative rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  background: '#161b27',
+                  borderColor: 'rgba(255,255,255,0.07)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(245,158,11,0.25)'
+                  e.currentTarget.style.background = '#1c2333'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'
+                  e.currentTarget.style.background = '#161b27'
+                }}
               >
-                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-5 group-hover:bg-electric group-hover:text-white transition-colors duration-300">
-                  <Icon className="w-6 h-6 text-electric group-hover:text-white transition-colors duration-300" />
+                {/* Icon */}
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 transition-colors duration-300"
+                  style={{ background: 'rgba(245,158,11,0.1)' }}
+                >
+                  <Icon className="w-5 h-5" style={{ color: '#f59e0b' }} />
                 </div>
-                <h3 className="text-lg font-bold text-navy mb-1">{service.title}</h3>
-                <p className="text-sm font-medium text-electric mb-3">{service.tagline}</p>
-                <p className="text-sm text-text-secondary leading-relaxed">
+
+                <h3 className="text-base font-bold text-white mb-1">
+                  {service.title}
+                </h3>
+                <p className="text-sm font-medium mb-3" style={{ color: '#f59e0b' }}>
+                  {service.tagline}
+                </p>
+                <p className="text-sm text-white/45 leading-relaxed">
                   {service.description}
                 </p>
               </motion.div>
             )
           })}
         </div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="text-center mt-14"
+        >
+          <button
+            onClick={() => {
+              const el = document.querySelector('#contact')
+              if (el) el.scrollIntoView({ behavior: 'smooth' })
+            }}
+            className="inline-flex items-center gap-2 px-7 py-3.5 border border-gold/30 text-gold font-semibold rounded-xl hover:bg-gold/10 hover:border-gold/60 transition-all duration-200 text-sm"
+          >
+            {t.nav.cta} →
+          </button>
+        </motion.div>
       </div>
     </section>
   )
